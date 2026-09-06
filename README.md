@@ -5,7 +5,7 @@
 ## 目录结构
 
 ```
-arcfra-kb/
+arcfra-wiki/
 ├── arcfra-wiki/            # 所有知识库内容(Markdown),文件夹结构即左侧导航结构
 │   ├── intro.md
 │   └── getting-started/
@@ -50,7 +50,7 @@ docker compose up -d --build
 ### 用 Docker 做开发预览(带热更新)
 
 ```bash
-docker compose --profile dev up arcfra-kb-dev
+docker compose --profile dev up arcfra-wiki-dev
 ```
 
 访问 `http://localhost:3000`。
@@ -72,11 +72,11 @@ docker compose --profile dev up arcfra-kb-dev
 
 项目已经初始化好本地 git 仓库(第一次 commit 已包含在压缩包里)。接下来只需要把它接到你的 GitHub 仓库:
 
-1. 在 GitHub 上新建一个**空**仓库(不要勾选自动生成 README/.gitignore,避免冲突),例如 `arcfra/arcfra-kb`
+1. 在 GitHub 上新建一个**空**仓库(不要勾选自动生成 README/.gitignore,避免冲突),例如 `arcfra/arcfra-wiki`
 2. 在项目目录下执行:
 
    ```bash
-   git remote add origin git@github.com:<你的账号>/arcfra-kb.git
+   git remote add origin git@github.com:<你的账号>/arcfra-wiki.git
    git branch -M main
    git push -u origin main
    ```
@@ -94,18 +94,18 @@ docker compose --profile dev up arcfra-kb-dev
 ### 已经内建的两个 GitHub Actions
 
 - **`.github/workflows/build.yml`**:每次 `push` / `PR` 自动 `npm install && npm run build`,构建失败会直接在 GitHub 上标红提醒,防止把改坏的文档合并进去
-- **`.github/workflows/docker-publish.yml`**:每次 push 到 `main` 会自动把 Docker 镜像构建好并发布到 GitHub Container Registry(`ghcr.io/<你的账号>/arcfra-kb`),之后在服务器上就可以直接:
+- **`.github/workflows/docker-publish.yml`**:每次 push 到 `main` 会自动把 Docker 镜像构建好并发布到 GitHub Container Registry(`ghcr.io/<你的账号>/arcfra-wiki`),之后在服务器上就可以直接:
 
   ```bash
-  docker pull ghcr.io/<你的账号>/arcfra-kb:latest
-  docker run -d -p 8080:80 ghcr.io/<你的账号>/arcfra-kb:latest
+  docker pull ghcr.io/<你的账号>/arcfra-wiki:latest
+  docker run -d -p 8080:80 ghcr.io/<你的账号>/arcfra-wiki:latest
   ```
 
   不需要在服务器上重新 `npm install` / `npm run build`,更新只需要重新 `pull` + 重启容器。
 
   > 注意:GHCR 发布的镜像默认是私有的,如果服务器要 `docker pull`,需要先在服务器上 `docker login ghcr.io`(用你的 GitHub 用户名 + [Personal Access Token](https://github.com/settings/tokens)),或者去仓库的 Packages 设置里把镜像改成 public。
 
-- 如果想让 `editUrl`(文档页面右上角「编辑此页」跳转链接)生效,记得把 `docusaurus.config.js` 里的 `https://github.com/arcfra/arcfra-kb` 换成你实际的仓库地址,`organizationName` / `projectName` 同理。
+- 如果想让 `editUrl`(文档页面右上角「编辑此页」跳转链接)生效,记得把 `docusaurus.config.js` 里的 `https://github.com/arcfra/arcfra-wiki` 换成你实际的仓库地址,`organizationName` / `projectName` 同理。
 
 ---
 

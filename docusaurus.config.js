@@ -12,7 +12,7 @@ const config = {
 
   // 部署到自己的服务器 / Docker,不需要 GitHub Pages 相关配置
   organizationName: 'arcfra',
-  projectName: 'arcfra-kb',
+  projectName: 'arcfra-wiki',
 
   onBrokenLinks: 'warn',
   onBrokenMarkdownLinks: 'warn',
@@ -31,7 +31,7 @@ const config = {
           path: 'arcfra-wiki', // 内容目录(文件夹/文件名用英文,内容仍可以是中文)
           routeBasePath: '/', // 文档即首页,模仿目标站「打开即进知识库」的体验
           sidebarPath: require.resolve('./sidebars.js'),
-          editUrl: 'https://github.com/arcfra/arcfra-kb/edit/main/',
+          editUrl: 'https://github.com/arcfra/arcfra-wiki/edit/main/',
         },
         blog: false, // 纯知识库,不需要博客模块
         pages: {
@@ -84,7 +84,7 @@ const config = {
           },
           {to: '/about', label: '关于我们', position: 'left'},
           {
-            href: 'https://github.com/arcfra/arcfra-kb',
+            href: 'https://github.com/arcfra/arcfra-wiki',
             label: 'GitHub',
             position: 'right',
           },

@@ -1,19 +1,19 @@
 services:
   # 生产环境: 构建静态站点后用 Nginx 提供服务
-  arcfra-kb:
+  arcfra-wiki:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: arcfra-kb
+    container_name: arcfra-wiki
     ports:
       - "8080:80"
     restart: unless-stopped
 
   # 开发环境: 挂载源码,热更新预览(docs 改了浏览器自动刷新)
-  # 用法: docker compose --profile dev up arcfra-kb-dev
-  arcfra-kb-dev:
+  # 用法: docker compose --profile dev up arcfra-wiki-dev
+  arcfra-wiki-dev:
     image: node:20-alpine
-    container_name: arcfra-kb-dev
+    container_name: arcfra-wiki-dev
     profiles: ["dev"]
     working_dir: /app
     volumes:
