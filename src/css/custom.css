@@ -1,0 +1,49 @@
+/**
+ * 配色取自参考站点 icon 中的蓝色 (#3683FF / #87BDFF),
+ * 整体还原「左侧文档导航 + 中间正文 + 右侧本页目录」的三栏观感。
+ */
+
+:root {
+  --ifm-color-primary: #3683ff;
+  --ifm-color-primary-dark: #1c72ff;
+  --ifm-color-primary-darker: #0f69ff;
+  --ifm-color-primary-darkest: #0056e0;
+  --ifm-color-primary-light: #5094ff;
+  --ifm-color-primary-lighter: #5f9cff;
+  --ifm-color-primary-lightest: #87bdff;
+  --ifm-code-font-size: 90%;
+  --ifm-navbar-height: 60px;
+  --docusaurus-highlighted-code-line-bg: rgba(54, 131, 255, 0.1);
+}
+
+[data-theme='dark'] {
+  --ifm-color-primary: #5f9cff;
+  --ifm-color-primary-dark: #3d87ff;
+  --ifm-color-primary-darker: #2c7dff;
+  --ifm-color-primary-darkest: #0060f0;
+  --ifm-color-primary-light: #81b1ff;
+  --ifm-color-primary-lighter: #92baff;
+  --ifm-color-primary-lightest: #c4dcff;
+  --ifm-background-color: #101418;
+  --docusaurus-highlighted-code-line-bg: rgba(95, 156, 255, 0.15);
+}
+
+.navbar {
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
+}
+
+.navbar__title {
+  font-weight: 700;
+}
+
+.menu__link--active {
+  font-weight: 600;
+}
+
+.table-of-contents {
+  border-left: 1px solid var(--ifm-toc-border-color);
+}
+
+.theme-doc-sidebar-container {
+  border-right: 1px solid var(--ifm-toc-border-color);
+}
