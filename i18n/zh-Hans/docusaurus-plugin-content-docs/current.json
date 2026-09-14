@@ -1,0 +1,14 @@
+{
+  "version.label": {
+    "message": "Next",
+    "description": "The label for version current"
+  },
+  "sidebar.kbSidebar.category.開始": {
+    "message": "開始",
+    "description": "The label for category 開始 in sidebar kbSidebar"
+  },
+  "sidebar.kbSidebar.category.開始.link.generated-index.description": {
+    "message": "新手入門文檔",
+    "description": "The generated-index page description for category 開始 in sidebar kbSidebar"
+  }
+}
