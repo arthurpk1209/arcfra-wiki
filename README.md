@@ -1,26 +1,26 @@
-# Arcfra知识库
+# Arcfra知識庫
 
-基于 [Docusaurus](https://docusaurus.io/) 搭建的知识库,风格参考 `kvm.6p7p.com`:左侧文档导航、中间正文、右侧本页目录、全文搜索、暗色模式。
+基於 [Docusaurus](https://docusaurus.io/) 搭建的知識庫,風格參考 `kvm.6p7p.com`:左側文件導覽、中間正文、右側本頁目錄、全文搜尋、暗色模式。
 
-## 目录结构
+## 目錄結構
 
 ```
 arcfra-wiki/
-├── arcfra-wiki/            # 所有知识库内容(Markdown),文件夹结构即左侧导航结构
+├── arcfra-wiki/            # 所有知識庫內容(Markdown),資料夾結構即左側導覽結構
 │   ├── intro.md
 │   └── getting-started/
 │       ├── _category_.json
 │       └── installation.md
 ├── src/
-│   ├── css/custom.css      # 主题配色(蓝色系,贴近参考站点)
-│   └── pages/about.js      # "关于我们" 独立页面
+│   ├── css/custom.css      # 主題配色(藍色系,貼近參考站點)
+│   └── pages/about.js      # "關於我們" 獨立頁面
 ├── scripts/
-│   ├── lib/slugify.js                # 中文标题 -> 拼音英文 slug 的共用小工具
-│   ├── notion-to-md.js               # 方案 A: Notion API 自动同步
-│   └── postprocess-notion-export.js  # 方案 B: 清洗 Notion 手动导出的 zip
+│   ├── lib/slugify.js                # 中文標題 -> 拼音英文 slug 的共用小工具
+│   ├── notion-to-md.js               # 方案 A: Notion API 自動同步
+│   └── postprocess-notion-export.js  # 方案 B: 清洗 Notion 手動匯出的 zip
 ├── .github/workflows/
-│   ├── build.yml            # 每次 push/PR 自动跑一次构建,构建失败会在 GitHub 上标红
-│   └── docker-publish.yml   # push 到 main 时自动把镜像发布到 GitHub Container Registry
+│   ├── build.yml            # 每次 push/PR 自動跑一次建置,建置失敗會在 GitHub 上標紅
+│   └── docker-publish.yml   # push 到 main 時自動把映像發布到 GitHub Container Registry
 ├── docusaurus.config.js
 ├── sidebars.js
 ├── Dockerfile
@@ -28,132 +28,132 @@ arcfra-wiki/
 └── nginx.conf
 ```
 
-> **命名规则**:所有文件夹 / 文件名一律用英文(拼音或语义化英文单词),内容本身(标题、正文)可以照常用中文。这样在 Git / URL / 命令行下都不会有编码或跨平台踩坑问题。上面两个迁移脚本都已经处理成「文件名转拼音,正文内容保留中文原文」。
+> **命名規則**:所有資料夾 / 檔案名一律用英文(拼音或語義化英文單詞),內容本身(標題、正文)可以照常用中文。這樣在 Git / URL / 命令列下都不會有編碼或跨平台踩坑問題。上面兩個遷移腳本都已經處理成「檔案名轉拼音,正文內容保留中文原文」。
 
-## 本地开发(不用 Docker)
+## 本地開發(不用 Docker)
 
 ```bash
 npm install
-npm run start        # http://localhost:3000,改文档热更新
+npm run start        # http://localhost:3000,改內容熱更新
 ```
 
-## 用 Docker 部署(生产)
+## 用 Docker 部署(生產)
 
 ```bash
 docker compose up -d --build
 ```
 
-访问 `http://<服务器IP>:8080` 即可。容器内部是「Node 构建静态文件 → Nginx 提供服务」的两段式镜像,运行时不依赖 Node,体积小、启动快。
+存取 `http://<伺服器IP>:8080` 即可。容器內部是「Node 建置靜態檔案 → Nginx 提供服務」的兩段式映像,執行時不依賴 Node,體積小、啟動快。
 
-如果只想改端口,编辑 `docker-compose.yml` 里的 `ports: - "8080:80"`。
+如果只想改連接埠,編輯 `docker-compose.yml` 裡的 `ports: - "8080:80"`。
 
-### 用 Docker 做开发预览(带热更新)
+### 用 Docker 做開發預覽(帶熱更新)
 
 ```bash
 docker compose --profile dev up arcfra-wiki-dev
 ```
 
-访问 `http://localhost:3000`。
+存取 `http://localhost:3000`。
 
-## 新增 / 编辑文档
+## 新增 / 編輯文件
 
-在 `arcfra-wiki/` 下新建 `.md` 文件或子文件夹即可(**文件夹/文件名请用英文**,标题和正文照常写中文),左侧导航自动生成,无需手动改配置。子文件夹里放一个 `_category_.json` 可以自定义分类标题和排序:
+在 `arcfra-wiki/` 下新建 `.md` 檔案或子資料夾即可(**資料夾/檔案名請用英文**,標題和正文照常寫中文),左側導覽自動生成,無需手動改設定。子資料夾裡放一個 `_category_.json` 可以自訂分類標題和排序:
 
 ```json
 {
-  "label": "运维",
+  "label": "維運",
   "position": 3
 }
 ```
 
 ---
 
-## 用 Git / GitHub 管理与备份
+## 用 Git / GitHub 管理與備份
 
-项目已经初始化好本地 git 仓库(第一次 commit 已包含在压缩包里)。接下来只需要把它接到你的 GitHub 仓库:
+專案已經初始化好本地 git 倉庫(第一次 commit 已包含在壓縮包裡)。接下來只需要把它接到你的 GitHub 倉庫:
 
-1. 在 GitHub 上新建一个**空**仓库(不要勾选自动生成 README/.gitignore,避免冲突),例如 `arcfra/arcfra-wiki`
-2. 在项目目录下执行:
+1. 在 GitHub 上新建一個**空**倉庫(不要勾選自動生成 README/.gitignore,避免衝突),例如 `arcfra/arcfra-wiki`
+2. 在專案目錄下執行:
 
    ```bash
-   git remote add origin git@github.com:<你的账号>/arcfra-wiki.git
+   git remote add origin git@github.com:<你的帳號>/arcfra-wiki.git
    git branch -M main
    git push -u origin main
    ```
 
-3. 之后每次改完文档,正常走 git 流程即可:
+3. 之後每次改完文件,正常走 git 流程即可:
 
    ```bash
    git add .
-   git commit -m "docs: 更新xxx说明"
+   git commit -m "docs: 更新xxx說明"
    git push
    ```
 
-   这样 GitHub 上就有完整的历史版本记录,相当于自动备份 + 可回溯的修改历史。
+   這樣 GitHub 上就有完整的歷史版本記錄,相當於自動備份 + 可回溯的修改歷史。
 
-### 已经内建的两个 GitHub Actions
+### 已經內建的兩個 GitHub Actions
 
-- **`.github/workflows/build.yml`**:每次 `push` / `PR` 自动 `npm install && npm run build`,构建失败会直接在 GitHub 上标红提醒,防止把改坏的文档合并进去
-- **`.github/workflows/docker-publish.yml`**:每次 push 到 `main` 会自动把 Docker 镜像构建好并发布到 GitHub Container Registry(`ghcr.io/<你的账号>/arcfra-wiki`),之后在服务器上就可以直接:
+- **`.github/workflows/build.yml`**:每次 `push` / `PR` 自動 `npm install && npm run build`,建置失敗會直接在 GitHub 上標紅提醒,防止把改壞的文件合併進去
+- **`.github/workflows/docker-publish.yml`**:每次 push 到 `main` 會自動把 Docker 映像建置好並發布到 GitHub Container Registry(`ghcr.io/<你的帳號>/arcfra-wiki`),之後在伺服器上就可以直接:
 
   ```bash
-  docker pull ghcr.io/<你的账号>/arcfra-wiki:latest
-  docker run -d -p 8080:80 ghcr.io/<你的账号>/arcfra-wiki:latest
+  docker pull ghcr.io/<你的帳號>/arcfra-wiki:latest
+  docker run -d -p 8080:80 ghcr.io/<你的帳號>/arcfra-wiki:latest
   ```
 
-  不需要在服务器上重新 `npm install` / `npm run build`,更新只需要重新 `pull` + 重启容器。
+  不需要在伺服器上重新 `npm install` / `npm run build`,更新只需要重新 `pull` + 重啟容器。
 
-  > 注意:GHCR 发布的镜像默认是私有的,如果服务器要 `docker pull`,需要先在服务器上 `docker login ghcr.io`(用你的 GitHub 用户名 + [Personal Access Token](https://github.com/settings/tokens)),或者去仓库的 Packages 设置里把镜像改成 public。
+  > 注意:GHCR 發布的映像預設是私有的,如果伺服器要 `docker pull`,需要先在伺服器上 `docker login ghcr.io`(用你的 GitHub 使用者名稱 + [Personal Access Token](https://github.com/settings/tokens)),或者去倉庫的 Packages 設定裡把映像改成 public。
 
-- 如果想让 `editUrl`(文档页面右上角「编辑此页」跳转链接)生效,记得把 `docusaurus.config.js` 里的 `https://github.com/arcfra/arcfra-wiki` 换成你实际的仓库地址,`organizationName` / `projectName` 同理。
+- 如果想讓 `editUrl`(文件頁面右上角「編輯此頁」跳轉連結)生效,記得把 `docusaurus.config.js` 裡的 `https://github.com/arcfra/arcfra-wiki` 換成你實際的倉庫地址,`organizationName` / `projectName` 同理。
 
 ---
 
-## 从 Notion 迁移文档
+## 從 Notion 遷移文件
 
-提供两种方式,任选其一。
+提供兩種方式,任選其一。
 
-### 方案 A:Notion API 自动同步(推荐,可重复执行)
+### 方案 A:Notion API 自動同步(推薦,可重複執行)
 
-优点是可以随时重新运行、保持增量更新,适合长期从 Notion 作为「编辑源」、Docusaurus 作为「发布站点」的场景。
+優點是可以隨時重新執行、保持增量更新,適合長期從 Notion 作為「編輯源」、Docusaurus 作為「發布站點」的場景。
 
-1. 打开 [notion.so/my-integrations](https://www.notion.so/my-integrations),创建一个 Internal Integration,复制 `Internal Integration Token`
-2. 回到 Notion,打开作为知识库根目录的那个页面 → 右上角 `···` → `Connections` → 把第 1 步创建的 integration 加进去。Notion 的授权会**级联到所有子页面**,所以只需要在最顶层根页面操作一次
-3. 复制该根页面的 URL,取最后一段 32 位字符作为 `NOTION_ROOT_PAGE_ID`(去掉中间的横杠)
-4. 执行:
+1. 打開 [notion.so/my-integrations](https://www.notion.so/my-integrations),建立一個 Internal Integration,複製 `Internal Integration Token`
+2. 回到 Notion,打開作為知識庫根目錄的那個頁面 → 右上角 `···` → `Connections` → 把第 1 步建立的 integration 加進去。Notion 的授權會**級聯到所有子頁面**,所以只需要在最頂層根頁面操作一次
+3. 複製該根頁面的 URL,取最後一段 32 位字元作為 `NOTION_ROOT_PAGE_ID`(去掉中間的連字符)
+4. 執行:
 
    ```bash
    npm install
    NOTION_TOKEN=secret_xxx NOTION_ROOT_PAGE_ID=xxxxxxxxxxxx npm run notion:sync
    ```
 
-5. 内容会写入 `docs/notion/`,页面层级自动转换成文件夹分类,图片自动下载到 `static/img/notion/`
-6. 检查一遍效果后,把 `docs/notion/` 挪到你想要的位置,或者直接保留在这个子目录下即可,侧边栏会自动识别
+5. 內容會寫入 `arcfra-wiki/notion/`,頁面層級自動轉換成資料夾分類,圖片自動下載到 `static/img/notion/`
+6. 檢查一遍效果後,把 `arcfra-wiki/notion/` 挪到你想要的位置,或者直接保留在這個子目錄下即可,側邊欄會自動識別
 
-**局限**:Notion 数据库(带筛选/视图的表)、同步块等复杂结构还原有限,建议同步后人工过一遍。
+**局限**:Notion 資料庫(帶篩選/檢視的表)、同步區塊等複雜結構還原有限,建議同步後人工過一遍。
 
-### 方案 B:手动导出 + 清洗脚本(不需要建 Integration,一次性迁移更简单)
+### 方案 B:手動匯出 + 清洗腳本(不需要建 Integration,一次性遷移更簡單)
 
-1. 在 Notion 网页版,打开根页面 → `···` → `Export` → 格式选 `Markdown & CSV`,勾选 `Include subpages`,导出 zip
-2. 解压到项目**外面**的任意目录,比如 `~/Downloads/notion-export`
-3. 执行:
+1. 在 Notion 網頁版,打開根頁面 → `···` → `Export` → 格式選 `Markdown & CSV`,勾選 `Include subpages`,匯出 zip
+2. 解壓到專案**外面**的任意目錄,比如 `~/Downloads/notion-export`
+3. 執行:
 
    ```bash
    NOTION_EXPORT_DIR=~/Downloads/notion-export npm run notion:clean
    ```
 
-4. 脚本会自动:
-   - 去掉 Notion 导出文件/文件夹名里那串 32 位 ID 后缀
-   - 修正因为改名而失效的内部链接、图片路径
-   - 把 `章节.md` + `章节/` 这种同名结构规整成 Docusaurus 的分类(自动生成 `_category_.json`,原 `章节.md` 变成 `章节/index.md`)
-5. 结果在 `docs/notion/`,检查无误后按需搬到 `docs/` 下合适的位置
+4. 腳本會自動:
+   - 去掉 Notion 匯出檔案/資料夾名裡那串 32 位 ID 後綴
+   - 修正因為改名而失效的內部連結、圖片路徑
+   - 把 `章節.md` + `章節/` 這種同名結構規整成 Docusaurus 的分類(自動生成 `_category_.json`,原 `章節.md` 變成 `章節/index.md`)
+5. 結果在 `arcfra-wiki/notion/`,檢查無誤後按需搬到 `arcfra-wiki/` 下合適的位置
 
-**局限**:同方案 A,数据库视图/筛选、部分嵌入内容不会被完整保留。
+**局限**:同方案 A,資料庫檢視/篩選、部分嵌入內容不會被完整保留。
 
-### 两种方案怎么选
+### 兩種方案怎麼選
 
-| | 方案 A(API) | 方案 B(手动导出) |
+| | 方案 A(API) | 方案 B(手動匯出) |
 |---|---|---|
 | 需要建 Notion Integration | 需要 | 不需要 |
-| 能否重复执行 / 增量同步 | 可以 | 每次都要重新导出 |
-| 适合场景 | 长期用 Notion 编辑、定期发布 | 一次性搬家,以后就在 Docusaurus 里直接改 |
+| 能否重複執行 / 增量同步 | 可以 | 每次都要重新匯出 |
+| 適合場景 | 長期用 Notion 編輯、定期發布 | 一次性搬家,以後就在 Docusaurus 裡直接改 |

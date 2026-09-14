@@ -1,8 +1,8 @@
 {
-  "label": "开始",
+  "label": "開始",
   "position": 2,
   "link": {
     "type": "generated-index",
-    "description": "新手入门相关文档"
+    "description": "新手入門相關文件"
   }
 }

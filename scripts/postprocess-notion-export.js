@@ -1,22 +1,22 @@
 /**
- * 备用方案: 处理 Notion 自带的「Export as Markdown & CSV」导出结果
+ * 備用方案: 處理 Notion 自帶的「Export as Markdown & CSV」匯出結果
  * ------------------------------------------------------------------
- * 适用场景: 不想创建 Notion Integration / API 权限比较麻烦时,
- * 直接在 Notion 网页版用 “···” -> Export -> Markdown & CSV
- * (记得勾选 "Include subpages" 和 "Include content")导出一个 zip。
+ * 適用場景: 不想建立 Notion Integration / API 權限比較麻煩時,
+ * 直接在 Notion 網頁版用 "···" -> Export -> Markdown & CSV
+ * (記得勾選 "Include subpages" 和 "Include content")匯出一個 zip。
  *
- * Notion 导出的文件/文件夹名会带一串 32 位十六进制 ID 后缀,例如:
- *   安装说明 3f9a1b2c4d5e6f7a8b9c0d1e2f3a4b5c.md
- * 本脚本会:
- *   1. 递归去掉所有文件 / 文件夹名里的这串 ID
- *   2. 同步修正 Markdown 内的相对链接和图片路径,使其在改名后依然有效
- *   3. 对「同名文件夹」结构(Notion: Section.md + Section/ 文件夹)自动生成
- *      Docusaurus 的 _category_.json,并把 Section.md 变成 Section/index.md
+ * Notion 匯出的檔案/資料夾名會帶一串 32 位十六進位 ID 後綴,例如:
+ *   安裝說明 3f9a1b2c4d5e6f7a8b9c0d1e2f3a4b5c.md
+ * 本腳本會:
+ *   1. 遞迴去掉所有檔案 / 資料夾名裡的這串 ID
+ *   2. 同步修正 Markdown 內的相對連結和圖片路徑,使其在改名後依然有效
+ *   3. 對「同名資料夾」結構(Notion: Section.md + Section/ 資料夾)自動生成
+ *      Docusaurus 的 _category_.json,並把 Section.md 變成 Section/index.md
  *
  * 用法:
- *   1. 解压 Notion 导出的 zip 到项目外的某个临时目录,例如 ~/Downloads/notion-export
+ *   1. 解壓 Notion 匯出的 zip 到專案外的某個暫存目錄,例如 ~/Downloads/notion-export
  *   2. NOTION_EXPORT_DIR=~/Downloads/notion-export npm run notion:clean
- *   3. 处理结果会写入 docs/notion/,检查无误后按需移动 / 合并到 docs/ 下的合适位置
+ *   3. 處理結果會寫入 arcfra-wiki/notion/,檢查無誤後按需移動 / 合併到 arcfra-wiki/ 下的合適位置
  */
 
 const fs = require('fs');
@@ -27,20 +27,20 @@ const SRC = process.env.NOTION_EXPORT_DIR;
 const DEST = process.env.NOTION_OUT_DIR || path.join(__dirname, '..', 'arcfra-wiki', 'notion');
 
 if (!SRC || !fs.existsSync(SRC)) {
-  console.error('请设置 NOTION_EXPORT_DIR 指向解压后的 Notion 导出文件夹');
+  console.error('請設定 NOTION_EXPORT_DIR 指向解壓後的 Notion 匯出資料夾');
   process.exit(1);
 }
 
 const HEX_ID = /[ _-]?[0-9a-f]{32}$/i;
 
-/** 去掉 Notion 附加的 32 位 ID 后缀,并把(可能是中文的)标题转成拼音 ASCII slug */
+/** 去掉 Notion 附加的 32 位 ID 後綴,並把(可能是中文的)標題轉成拼音 ASCII slug */
 function cleanName(name, usedNames) {
   const ext = path.extname(name);
   const base = ext ? name.slice(0, -ext.length) : name;
   const originalTitle = base.replace(HEX_ID, '').trim();
   const slug = toAsciiSlug(originalTitle, 'untitled');
 
-  // 避免两个不同的中文标题转成拼音后重名
+  // 避免兩個不同的中文標題轉成拼音後重名
   let finalSlug = slug;
   let n = 2;
   while (usedNames.has(finalSlug)) {
@@ -53,8 +53,8 @@ function cleanName(name, usedNames) {
 }
 
 /**
- * 第一步: 复制整棵树到 DEST,文件/文件夹名转成英文 slug,
- * 同时记录 旧名->新名(用于修正链接) 和 新名->原始标题(用于分类标签)。
+ * 第一步: 複製整棵樹到 DEST,檔案/資料夾名轉成英文 slug,
+ * 同時記錄 舊名->新名(用於修正連結) 和 新名->原始標題(用於分類標籤)。
  */
 function copyAndRename(srcDir, destDir, nameMap, titleMap) {
   fs.mkdirSync(destDir, {recursive: true});
@@ -74,7 +74,7 @@ function copyAndRename(srcDir, destDir, nameMap, titleMap) {
   }
 }
 
-/** 第二步: 修正 markdown 里引用旧文件名的链接 / 图片路径 */
+/** 第二步: 修正 markdown 裡引用舊檔案名的連結 / 圖片路徑 */
 function fixLinks(dir, nameMap) {
   for (const entry of fs.readdirSync(dir, {withFileTypes: true})) {
     const p = path.join(dir, entry.name);
@@ -94,7 +94,7 @@ function fixLinks(dir, nameMap) {
   }
 }
 
-/** 第三步: 把 "Section.md + Section/" 这种同名结构规整成 Docusaurus 分类 */
+/** 第三步: 把 "Section.md + Section/" 這種同名結構規整成 Docusaurus 分類 */
 function normalizeCategories(dir, titleMap, position = 1) {
   const entries = fs.readdirSync(dir, {withFileTypes: true});
   const dirNames = new Set(entries.filter((e) => e.isDirectory()).map((e) => e.name));
@@ -107,7 +107,7 @@ function normalizeCategories(dir, titleMap, position = 1) {
       const label = titleMap.get(entry.name) || base;
 
       if (dirNames.has(base)) {
-        // 同名文件夹存在 -> 该 md 是这个分类的落地页
+        // 同名資料夾存在 -> 該 md 是這個分類的落地頁
         const folder = path.join(dir, base);
         fs.writeFileSync(
           path.join(folder, '_category_.json'),
@@ -130,7 +130,7 @@ function normalizeCategories(dir, titleMap, position = 1) {
 
 function addFrontmatter(mdPath, position) {
   const content = fs.readFileSync(mdPath, 'utf8');
-  if (content.startsWith('---')) return; // 已经有 frontmatter
+  if (content.startsWith('---')) return; // 已經有 frontmatter
   fs.writeFileSync(mdPath, `---\nsidebar_position: ${position}\n---\n\n${content}`);
 }
 
@@ -139,17 +139,17 @@ function main() {
   const nameMap = new Map();
   const titleMap = new Map();
 
-  console.log('第 1 步: 复制文件,文件名转成英文 slug...');
+  console.log('第 1 步: 複製檔案,檔案名轉成英文 slug...');
   copyAndRename(SRC, DEST, nameMap, titleMap);
 
-  console.log('第 2 步: 修正内部链接...');
+  console.log('第 2 步: 修正內部連結...');
   fixLinks(DEST, nameMap);
 
-  console.log('第 3 步: 生成 Docusaurus 分类结构(分类标签保留原始中文标题)...');
+  console.log('第 3 步: 生成 Docusaurus 分類結構(分類標籤保留原始中文標題)...');
   normalizeCategories(DEST, titleMap);
 
-  console.log('处理完成 ✅  结果在', DEST);
-  console.log('建议人工检查一遍图片、表格、以及 Notion 数据库(转出来是普通表格,无法保留视图/筛选)。');
+  console.log('處理完成 ✅  結果在', DEST);
+  console.log('建議人工檢查一遍圖片、表格、以及 Notion 資料庫(轉出來是普通表格,無法保留檢視/篩選)。');
 }
 
 main();

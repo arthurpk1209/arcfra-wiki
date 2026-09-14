@@ -1,25 +1,25 @@
 /**
- * Notion -> Docusaurus 自动同步脚本
+ * Notion -> Docusaurus 自動同步腳本
  * ------------------------------------------------
  * 用法:
- *   1. 在 https://www.notion.so/my-integrations 创建一个 Internal Integration,拿到 NOTION_TOKEN
- *   2. 打开你 Notion 里作为知识库根目录的那个页面 -> 右上角 ··· -> Connections -> 把刚才创建的
- *      integration 加进去("Add connections")。Notion 的分享权限会向下级联到所有子页面,
- *      所以只需要在最顶层的根页面授权一次即可。
- *   3. 复制该根页面的 URL,取出 32 位 page id(URL 最后一段的连字符去掉即可)
- *   4. 执行:
+ *   1. 在 https://www.notion.so/my-integrations 建立一個 Internal Integration,拿到 NOTION_TOKEN
+ *   2. 打開你 Notion 裡作為知識庫根目錄的那個頁面 -> 右上角 ··· -> Connections -> 把剛才建立的
+ *      integration 加進去("Add connections")。Notion 的分享權限會向下級聯到所有子頁面,
+ *      所以只需要在最頂層的根頁面授權一次即可。
+ *   3. 複製該根頁面的 URL,取出 32 位 page id(URL 最後一段的連字符去掉即可)
+ *   4. 執行:
  *        NOTION_TOKEN=secret_xxx NOTION_ROOT_PAGE_ID=xxxxxxxx npm run notion:sync
  *
- * 行为:
- *   - 根页面下的每一个子页面(child_page)会被拉取为一篇文档
- *   - 如果某个子页面自己还有子页面,会被转成一个「分类文件夹」(带 _category_.json),
- *     该页面本身的正文会存成该文件夹下的 index.md,子页面递归放入同一文件夹
- *   - 页面中引用的图片会被下载到 static/img/notion/ 并把链接改写为本地路径
+ * 行為:
+ *   - 根頁面下的每一個子頁面(child_page)會被拉取為一篇文件
+ *   - 如果某個子頁面自己還有子頁面,會被轉成一個「分類資料夾」(帶 _category_.json),
+ *     該頁面本身的正文會存成該資料夾下的 index.md,子頁面遞迴放入同一資料夾
+ *   - 頁面中引用的圖片會被下載到 static/img/notion/ 並把連結改寫為本地路徑
  *
  * 注意:
- *   - 这是"覆盖式"同步:每次运行会重新生成 docs/ 下由本脚本管理的内容,
- *     建议单独用一个子目录(默认 docs/notion/)存放同步内容,避免和手写文档混在一起冲突
- *   - Notion API 对复杂 block(数据库视图、同步块等)的还原有限,建议同步后人工检查一遍
+ *   - 這是「覆蓋式」同步:每次執行會重新生成 arcfra-wiki/ 下由本腳本管理的內容,
+ *     建議單獨用一個子目錄(預設 arcfra-wiki/notion/)存放同步內容,避免和手寫文件混在一起衝突
+ *   - Notion API 對複雜 block(資料庫檢視、同步區塊等)的還原有限,建議同步後人工檢查一遍
  */
 
 const fs = require('fs');
@@ -35,14 +35,14 @@ const OUT_DIR = process.env.NOTION_OUT_DIR || path.join(__dirname, '..', 'arcfra
 const IMG_DIR = path.join(__dirname, '..', 'static', 'img', 'notion');
 
 if (!NOTION_TOKEN || !ROOT_PAGE_ID) {
-  console.error('缺少环境变量: 请设置 NOTION_TOKEN 和 NOTION_ROOT_PAGE_ID');
+  console.error('缺少環境變數: 請設定 NOTION_TOKEN 和 NOTION_ROOT_PAGE_ID');
   process.exit(1);
 }
 
 const notion = new Client({auth: NOTION_TOKEN});
 const n2m = new NotionToMarkdown({notionClient: notion});
 
-// child_page 会在正文里单独处理(递归导出),避免在 markdown 正文里重复出现一行链接
+// child_page 會在正文裡單獨處理(遞迴匯出),避免在 markdown 正文裡重複出現一行連結
 n2m.setCustomTransformer('child_page', async () => '');
 
 function getPageTitle(page) {
@@ -104,7 +104,7 @@ async function rewriteImages(markdown, slug) {
             result = result.split(full).join(`![${alt}](${localPath})`);
           }
         })
-        .catch((err) => console.warn(`  图片下载失败 ${url}:`, err.message)),
+        .catch((err) => console.warn(`  圖片下載失敗 ${url}:`, err.message)),
     );
   }
   await Promise.all(tasks);
@@ -114,7 +114,7 @@ async function rewriteImages(markdown, slug) {
 async function processPage(pageId, dirPath, position) {
   const page = await notion.pages.retrieve({page_id: pageId});
   const title = getPageTitle(page);
-  // 标题可能是中文,文件名一律转成拼音 ASCII slug;标题本身仍会写进正文/frontmatter
+  // 標題可能是中文,檔案名一律轉成拼音 ASCII slug;標題本身仍會寫進正文/frontmatter
   const slug = toAsciiSlug(title, `page-${pageId.replace(/-/g, '').slice(0, 8)}`);
 
   const mdBlocks = await n2m.pageToMarkdown(pageId);
@@ -130,7 +130,7 @@ async function processPage(pageId, dirPath, position) {
   if (childPages.length === 0) {
     const filePath = path.join(dirPath, `${slug}.md`);
     fs.writeFileSync(filePath, `${frontmatter}# ${title}\n\n${markdown}\n`);
-    console.log(`文档: ${filePath}`);
+    console.log(`文件: ${filePath}`);
   } else {
     const subDir = path.join(dirPath, slug);
     fs.mkdirSync(subDir, {recursive: true});
@@ -142,7 +142,7 @@ async function processPage(pageId, dirPath, position) {
       path.join(subDir, 'index.md'),
       `${frontmatter}# ${title}\n\n${markdown}\n`,
     );
-    console.log(`分类: ${subDir}`);
+    console.log(`分類: ${subDir}`);
     let childPos = 1;
     for (const child of childPages) {
       await processPage(child.id, subDir, childPos);
@@ -152,13 +152,13 @@ async function processPage(pageId, dirPath, position) {
 }
 
 async function main() {
-  console.log('开始从 Notion 同步...');
+  console.log('開始從 Notion 同步...');
   fs.rmSync(OUT_DIR, {recursive: true, force: true});
   fs.mkdirSync(OUT_DIR, {recursive: true});
 
   const topLevel = await listChildPages(ROOT_PAGE_ID);
   if (topLevel.length === 0) {
-    console.warn('根页面下没有找到任何子页面,请确认 integration 是否已被授权访问该页面。');
+    console.warn('根頁面下沒有找到任何子頁面,請確認 integration 是否已被授權存取該頁面。');
     return;
   }
 
@@ -167,10 +167,10 @@ async function main() {
     await processPage(child.id, OUT_DIR, pos);
     pos += 1;
   }
-  console.log('同步完成 ✅  内容已写入', OUT_DIR);
+  console.log('同步完成 ✅  內容已寫入', OUT_DIR);
 }
 
 main().catch((err) => {
-  console.error('同步失败:', err);
+  console.error('同步失敗:', err);
   process.exit(1);
 });

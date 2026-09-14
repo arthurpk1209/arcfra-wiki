@@ -1,5 +1,5 @@
 services:
-  # 生产环境: 构建静态站点后用 Nginx 提供服务
+  # 生產環境: 建置靜態站點後用 Nginx 提供服務
   arcfra-wiki:
     build:
       context: .
@@ -9,7 +9,7 @@ services:
       - "8080:80"
     restart: unless-stopped
 
-  # 开发环境: 挂载源码,热更新预览(docs 改了浏览器自动刷新)
+  # 開發環境: 掛載原始碼,熱更新預覽(內容改了瀏覽器自動刷新)
   # 用法: docker compose --profile dev up arcfra-wiki-dev
   arcfra-wiki-dev:
     image: node:20-alpine

@@ -1,8 +1,8 @@
 const pinyin = require('pinyin');
 
 /**
- * 把任意标题(可能含中文)转成纯 ASCII 的英文 slug,用于文件名/目录名。
- * 页面正文、frontmatter 里的中文标题不受影响,只影响文件系统命名。
+ * 把任意標題(可能含中文)轉成純 ASCII 的英文 slug,用於檔案名/目錄名。
+ * 頁面正文、frontmatter 裡的中文標題不受影響,只影響檔案系統命名。
  */
 function toAsciiSlug(input, fallback = 'page') {
   const str = String(input || '').trim();
