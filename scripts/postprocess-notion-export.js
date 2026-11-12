@@ -12,6 +12,12 @@
  *   2. 同步修正 Markdown 內的相對連結和圖片路徑,使其在改名後依然有效
  *   3. 對「同名資料夾」結構(Notion: Section.md + Section/ 資料夾)自動生成
  *      Docusaurus 的 _category_.json,並把 Section.md 變成 Section/index.md
+ *   4. 所有輸出的 .md 都會補上巢狀的 `mdx: { format: md }` frontmatter,強制 Docusaurus 用純
+ *      Markdown 解析(Notion 內文常見的 `<UEFI>`、`<username>` 這類尖括號文字,MDX 會誤判成
+ *      沒閉合的 JSX 標籤而導致 `docusaurus build` 失敗;純 Markdown 模式沒有這個問題)
+ *   5. 內文標題(檔案第一個標題之後的部分)會整體降一級,避免跟檔案本身的標題撞層級,
+ *      也讓標題落在 Docusaurus 右側「本頁目錄」預設顯示的 H2~H3 範圍內(不然 Notion 頁面如果
+ *      習慣所有段落標題都打 Heading 1,同步後右側目錄會整個是空的)
  *
  * 用法:
  *   1. 解壓 Notion 匯出的 zip 到專案外的某個暫存目錄,例如 ~/Downloads/notion-export
@@ -22,6 +28,7 @@
 const fs = require('fs');
 const path = require('path');
 const {toAsciiSlug} = require('./lib/slugify');
+const {demoteHeadings} = require('./lib/markdown');
 
 const SRC = process.env.NOTION_EXPORT_DIR;
 const DEST = process.env.NOTION_OUT_DIR || path.join(__dirname, '..', 'arcfra-wiki', 'notion');
@@ -74,7 +81,7 @@ function copyAndRename(srcDir, destDir, nameMap, titleMap) {
   }
 }
 
-/** 第二步: 修正 markdown 裡引用舊檔案名的連結 / 圖片路徑 */
+/** 第二步: 修正 markdown 裡引用舊檔案名的連結 / 圖片路徑,並把內文標題整體降一級 */
 function fixLinks(dir, nameMap) {
   for (const entry of fs.readdirSync(dir, {withFileTypes: true})) {
     const p = path.join(dir, entry.name);
@@ -89,6 +96,9 @@ function fixLinks(dir, nameMap) {
         content = content.split(oldEncoded).join(newEncoded);
         content = content.split(oldName).join(newName);
       }
+      // 檔案第一個標題是 Notion 匯出時自帶的頁面標題,保留不動;
+      // 之後的標題整體降一級,詳見檔案開頭說明
+      content = demoteHeadings(content, {skipFirstHeading: true});
       fs.writeFileSync(p, content);
     }
   }
@@ -113,7 +123,9 @@ function normalizeCategories(dir, titleMap, position = 1) {
           path.join(folder, '_category_.json'),
           JSON.stringify({label, position: pos}, null, 2),
         );
-        fs.renameSync(mdPath, path.join(folder, 'index.md'));
+        const indexPath = path.join(folder, 'index.md');
+        fs.renameSync(mdPath, indexPath);
+        addFrontmatter(indexPath, pos);
       } else {
         addFrontmatter(mdPath, pos);
       }
@@ -128,10 +140,37 @@ function normalizeCategories(dir, titleMap, position = 1) {
   }
 }
 
+/**
+ * 補上/修正 frontmatter。
+ * - 沒有 frontmatter 的檔案: 加上 sidebar_position + 巢狀的 mdx.format: md
+ * - 已經有 frontmatter 的檔案(例如已被本腳本之前的版本處理過): 只補上缺少的 mdx.format: md,
+ *   不動其他既有欄位
+ *
+ * mdx.format: md 是關鍵:強制 Docusaurus 用純 Markdown(而非 MDX)解析,避免 Notion 內文常見的
+ * `<UEFI>`、`<username>` 這類尖括號文字被誤判成沒閉合的 JSX 標籤,導致 `docusaurus build` 失敗。
+ * 注意這個 key 在 Docusaurus 3.10 是巢狀寫法(`mdx:` 底下一層 `format:`),不是頂層 `format:`。
+ */
 function addFrontmatter(mdPath, position) {
   const content = fs.readFileSync(mdPath, 'utf8');
-  if (content.startsWith('---')) return; // 已經有 frontmatter
-  fs.writeFileSync(mdPath, `---\nsidebar_position: ${position}\n---\n\n${content}`);
+
+  if (!content.startsWith('---')) {
+    fs.writeFileSync(
+      mdPath,
+      `---\nsidebar_position: ${position}\nmdx:\n  format: md\nnotion_headings_demoted: true\n---\n\n${content}`,
+    );
+    return;
+  }
+
+  const closingIndex = content.indexOf('\n---', 3);
+  if (closingIndex === -1) return; // frontmatter 格式異常,不處理以免破壞內容
+  const frontmatterBody = content.slice(3, closingIndex);
+  if (/^\s*mdx\s*:/m.test(frontmatterBody)) return; // 已經有 mdx 欄位(假設已含 format)
+
+  const insertAt = closingIndex;
+  fs.writeFileSync(
+    mdPath,
+    `${content.slice(0, insertAt)}\nmdx:\n  format: md\nnotion_headings_demoted: true${content.slice(insertAt)}`,
+  );
 }
 
 function main() {

@@ -13,7 +13,8 @@
     "write-translations": "docusaurus write-translations",
     "write-heading-ids": "docusaurus write-heading-ids",
     "notion:sync": "node scripts/notion-to-md.js",
-    "notion:clean": "node scripts/postprocess-notion-export.js"
+    "notion:clean": "node scripts/postprocess-notion-export.js",
+    "notion:patch-mdx": "node scripts/patch-mdx-format.js"
   },
   "dependencies": {
     "@docusaurus/core": "3.10.2",
@@ -28,7 +29,7 @@
   "devDependencies": {
     "@docusaurus/module-type-aliases": "3.10.2",
     "@docusaurus/types": "3.10.2",
-    "@notionhq/client": "^2.2.15",
+    "@notionhq/client": "^5.23.0",
     "notion-to-md": "^3.1.1",
     "node-fetch": "^3.3.2",
     "pinyin": "^4.0.0"

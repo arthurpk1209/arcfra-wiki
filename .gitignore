@@ -3,3 +3,8 @@ build
 .docusaurus
 .env
 .DS_Store
+.last-build-hash
+
+# Notion 同步產生的內容(由 update.sh 在伺服器上重新產生,不放進 git,避免 git pull 衝突)
+arcfra-wiki/guide/**/notion-*.md
+static/img/notion/

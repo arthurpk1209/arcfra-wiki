@@ -1,0 +1,8 @@
+{
+  "label": "Guide",
+  "position": 3,
+  "link": {
+    "type": "generated-index",
+    "description": "操作指南:安裝部署、日常管理操作"
+  }
+}

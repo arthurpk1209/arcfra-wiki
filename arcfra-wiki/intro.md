@@ -13,17 +13,9 @@ sidebar_position: 1
 - 右側「本頁目錄」自動擷取當前頁面的標題層級
 - 右上角搜尋框支援 `Ctrl + K` 快捷喚起全文檢索
 
-## 目錄結構約定
+## 目錄結構
 
-```text
-arcfra-wiki/
-  intro.md               # 本頁,固定為首頁 (slug: /)
-  getting-started/
-    _category_.json      # 分類標題、排序
-    installation.md
-  ops/
-    _category_.json
-    deployment-guide.md
-```
-
-新增文件時,只需要在 `arcfra-wiki/` 下新建 Markdown 檔案或子資料夾,左側導覽會自動更新,無需手動維護設定。
+- **Getting Started**:Arcfra所用與所學分享
+- **Guide**
+  - **安裝部署**
+  - **管理操作**

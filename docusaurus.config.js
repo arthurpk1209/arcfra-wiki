@@ -31,7 +31,9 @@ const config = {
           path: 'arcfra-wiki', // 內容目錄(資料夾/檔案名用英文,內容仍可以是中文)
           routeBasePath: '/', // 文件即首頁,模仿目標站「打開即進知識庫」的體驗
           sidebarPath: require.resolve('./sidebars.js'),
-          editUrl: 'https://github.com/arcfra/arcfra-wiki/edit/main/',
+          // editUrl 沒設定 -> 每篇文件底下不會顯示「編輯此頁」連結。
+          // 如果之後想開放讀者直接跳到 GitHub 編輯原始檔,把這行取消註解並換成你的倉庫網址:
+          // editUrl: 'https://github.com/arcfra/arcfra-wiki/edit/main/',
         },
         blog: false, // 純知識庫,不需要部落格模組
         pages: {
@@ -94,6 +96,12 @@ const config = {
         style: 'dark',
         links: [],
         copyright: `© ${new Date().getFullYear()} Arcfra知識庫. Powered by Docusaurus.`,
+      },
+      // 右側「本頁目錄」預設只收 H2~H3,這裡放寬到 H2~H4,搭配同步腳本把內文標題
+      // 整體降一級的處理,確保 Notion 內容(常見全部打 Heading 1)也能被目錄收錄
+      tableOfContents: {
+        minHeadingLevel: 2,
+        maxHeadingLevel: 4,
       },
       prism: {
         theme: prismThemes.github,

@@ -47,3 +47,8 @@
 .theme-doc-sidebar-container {
   border-right: 1px solid var(--ifm-toc-border-color);
 }
+
+/* 分類索引頁的卡片只顯示標題,隱藏自動產生的內容摘要 */
+[class*='cardContainer'] [class*='cardDescription'] {
+  display: none;
+}

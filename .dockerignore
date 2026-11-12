@@ -4,3 +4,4 @@ build
 .git
 .env
 npm-debug.log
+.last-build-hash
